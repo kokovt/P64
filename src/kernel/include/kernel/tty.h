@@ -6,5 +6,8 @@ void terminal_initialize(void);
 void terminal_putchar(char c);
 void terminal_write(const char *data, size_t size);
 void terminal_writestring(const char *data);
+void terminal_clear();
+void terminal_clearline(size_t line);
+void terminal_editline(size_t line, const char *replacement_text);
 
 #endif
