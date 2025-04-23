@@ -12,6 +12,6 @@ New lines.
 
 Follow [this tutorial](wiki.osdev.org/GCC_Cross-Compiler) to build a cross compiler.
 
-Once you build the cross compiler, add it to your path (Make sure its called i386-elf-(xxx)), and just run build ISO!
+Once you build the cross compiler, add it to your path (Make sure its called i686-elf-(xxx)), and just run build ISO!
 
 It will automatically launch in Qemu
