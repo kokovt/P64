@@ -9,8 +9,7 @@ void kernel_main(void) {
   terminal_initialize();
   printf("P64 TESTING\n");
   printf("New lines work!\n");
-  printf("Next task: Fix comments and add terminal scrolling...");
-  terminal_editline(1, "Testing terminal line replacing...");
+  printf("Terminal scrolling works!");
 }
 
 #ifdef __cplusplus

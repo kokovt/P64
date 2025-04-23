@@ -1,4 +1,7 @@
 // ----- DEPENDANCIES -----
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "../../../libc/include/string.h"
 #include "vga.h"
 #include <stdbool.h>
@@ -16,6 +19,9 @@ static uint8_t terminal_color;
 static uint16_t *terminal_buffer;
 
 // ----- FUNCTIONS -----
+
+void terminal_scroll();
+
 void terminal_initialize(void) {
   terminal_row = 0;
   terminal_column = 0;
@@ -55,18 +61,25 @@ void terminal_putentryat(unsigned char c, uint8_t color, size_t x, size_t y) {
 }
 
 void terminal_putchar(char c) {
+  if (terminal_row > VGA_HEIGHT)
+    terminal_row = VGA_HEIGHT;
+
   unsigned char uc = c;
   if (c == '\n') {
     terminal_row += 1;
     terminal_column = 0;
+
+    if (terminal_row >= VGA_HEIGHT) {
+      terminal_scroll();
+    }
     return;
   }
 
   terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
   if (++terminal_column == VGA_WIDTH) {
     terminal_column = 0;
-    if (++terminal_row == VGA_WIDTH) {
-      terminal_row = 0;
+    if (++terminal_row == VGA_HEIGHT) {
+      terminal_scroll();
     }
   }
 }
@@ -95,3 +108,20 @@ void terminal_editline(size_t line, const char *replacement_text) {
   terminal_row = old_row;
   terminal_column = old_column;
 }
+
+void terminal_scroll() {
+  while (terminal_row >= VGA_HEIGHT) {
+    for (size_t y = 0; y < VGA_HEIGHT; y++) {
+      for (size_t x = 0; x < VGA_WIDTH; x++) {
+        terminal_buffer[y * VGA_WIDTH + x] =
+            terminal_buffer[(y + 1) * VGA_WIDTH + x];
+      }
+    }
+
+    terminal_row -= 1;
+  }
+}
+
+#ifdef __cplusplus
+}
+#endif
