@@ -8,6 +8,10 @@ Rendering text to the screen.
 
 New lines.
 
+Editing old lines that are currently rendered.
+
+Clearing the console.
+
 ## Building
 
 Follow [this tutorial](wiki.osdev.org/GCC_Cross-Compiler) to build a cross compiler.
