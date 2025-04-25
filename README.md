@@ -8,9 +8,7 @@ Rendering text to the screen.
 
 New lines.
 
-Editing old lines that are currently rendered.
-
-Clearing the console.
+Rendering squares
 
 ## Building
 
