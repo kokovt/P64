@@ -1,12 +1,12 @@
 #include "../include/string.h"
 
-void *memcpy(void *restrict dstptr, const void *restrict srcptr, size_t size) {
-  unsigned char *dst = (unsigned char *)dstptr;
-  const unsigned char *src = (const unsigned char *)srcptr;
+void *memcpy(void *dest, const void *src, size_t n) {
+  uint8_t *pdest = (uint8_t *)dest;
+  const uint8_t *psrc = (const uint8_t *)src;
 
-  for (size_t i = 0; i < size; i++) {
-    dst[i] = src[i];
+  for (size_t i = 0; i < n; i++) {
+    pdest[i] = psrc[i];
   }
 
-  return dstptr;
+  return dest;
 }

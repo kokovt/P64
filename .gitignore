@@ -1,3 +1,4 @@
 crossCompiler/
-isodir/
 build/
+iso_root/
+limine/
