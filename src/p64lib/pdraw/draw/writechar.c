@@ -1,5 +1,4 @@
-#include "../include/draw.h"
-
+#include "../../include/draw.h"
 size_t row = 0;
 size_t column = 0;
 
@@ -12,9 +11,7 @@ void writechar(char ch, uint32_t colour) {
   if (ch == '\n')
     return newline();
 
-  struct limine_framebuffer *framebuffer = getframebuffer();
-
-  size_t max_columns = framebuffer->width / 8;
+  size_t max_columns = kernel.framebuffer->width / 8;
 
   uint64_t first_byte_idx = ch * 16;
   for (size_t y = 0; y < 16; y++) {

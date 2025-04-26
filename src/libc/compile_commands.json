@@ -1,0 +1,39 @@
+[
+ {
+  "directory": "/home/ari/programming/P64/src/libc",
+  "arguments": [
+   "x86_64-elf-gcc",
+   "-c",
+   "../../src/libc/stdio/printf.c",
+   "../../src/libc/stdio/putchar.c",
+   "../../src/libc/string/memcmp.c",
+   "../../src/libc/string/memcpy.c",
+   "../../src/libc/string/memmove.c",
+   "../../src/libc/string/memset.c",
+   "../../src/libc/string/strlen.c",
+   "-g",
+   "-O2",
+   "-pipe",
+   "-Wall",
+   "-Wextra",
+   "-std=gnu11",
+   "-ffreestanding",
+   "-fno-stack-protector",
+   "-fno-stack-check",
+   "-fno-PIC",
+   "-m64",
+   "-march=x86-64",
+   "-mno-80387",
+   "-mno-mmx",
+   "-mno-sse",
+   "-mno-sse2",
+   "-mno-red-zone",
+   "-mcmodel=kernel",
+   "-nostdlib",
+   "-I../../src/p64lib/include",
+   "-I../../src/kernel/include/",
+   "-I../../src/kernel/arch/x86_64-elf/"
+  ],
+  "file": "../../src/libc/string/strlen.c"
+ }
+]

@@ -1,8 +1,4 @@
 #include "../include/stdio.h"
-#include "../include/string.h"
-#include <limits.h>
-#include <stdarg.h>
-#include <stdbool.h>
 
 static bool print(const char *data, size_t length) {
   const unsigned char *bytes = (const unsigned char *)data;

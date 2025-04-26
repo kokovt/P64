@@ -1,10 +1,8 @@
-// ----- DEPENDANCIES -----
-#include "./kernel.h"
-#include "../../libc/include/stdio.h"
-#include "../../p64lib/pdraw/include/draw.h"
-#include "../arch/x86_64-elf/limine.h"
-#include "../include/hcf.h"
-#include "../include/mem/paging.h"
+#pragma once
+
+#include <hcf.h>
+#include <kernel.h>
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -19,6 +17,11 @@ __attribute__((
         ".limine_requests"))) static volatile struct limine_framebuffer_request
     framebuffer_request = {.id = LIMINE_FRAMEBUFFER_REQUEST, .revision = 0};
 
+__attribute__((
+    used,
+    section(".limine_requests"))) static volatile struct limine_hhdm_request
+    hhdm_request = {.id = LIMINE_HHDM_REQUEST, .revision = 0};
+
 __attribute__((used,
                section(".limine_requests_"
                        "start"))) static volatile LIMINE_REQUESTS_START_MARKER;
@@ -28,7 +31,7 @@ __attribute__((
     section(
         ".limine_requests_end"))) static volatile LIMINE_REQUESTS_END_MARKER;
 
-void kmain(void) {
+inline static void initkernel() {
   if (LIMINE_BASE_REVISION_SUPPORTED == false) {
     hcf();
   }
@@ -38,14 +41,8 @@ void kmain(void) {
     hcf();
   }
 
-  setuppaging();
-
-  printf("P64 TESTING!\n");
-  printf("TESTING NEW LINES\n");
-  fillrect(100, 100, 100, 100, 0xfffff);
-  hcf();
-}
-
-struct limine_framebuffer *getframebuffer() {
-  return framebuffer_request.response->framebuffers[0];
+  if (hhdm_request.response == NULL)
+    hcf();
+  kernel.framebuffer = framebuffer_request.response->framebuffers[0];
+  kernel.hhdm = hhdm_request.response->offset;
 }
