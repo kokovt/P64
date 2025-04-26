@@ -5,6 +5,7 @@ setuplimine:
 	make -C limine
 
 setup:
+	ls
 	mkdir ./build/
 	mkdir ./iso_root/
 	mkdir ./iso_root/boot/
@@ -37,7 +38,9 @@ makeiso:
 	  iso_root -o ./build/p64.iso
 	./limine/limine bios-install ./build/p64.iso
 
-build: clean setup makestdlib makep64lib makekernel makeiso run
+clean-build: clean setup makestdlib makep64lib makekernel makeiso run
+
+build: makestdlib makep64lib makekernel makeiso run
 
 run:
 	qemu-system-x86_64 -cdrom ./build/p64.iso
@@ -46,6 +49,6 @@ run:
 clean:
 	rm -rf ./iso_root/ ./build/
 
-all: setuplimine setup build run 
+all: setuplimine setup build 
 
 .PHONY: clean setup build run
