@@ -2,3 +2,10 @@ crossCompiler/
 build/
 iso_root/
 limine/
+.venv/
+src/kernel/.cache/
+src/libc/.cache/
+src/p64lib/.cache/
+src/kernel/compile_commands.json
+src/libc/compile_commands.json
+src/p64lib/compile_commands.json
