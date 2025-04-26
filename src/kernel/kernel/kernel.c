@@ -4,6 +4,7 @@
 #include "../../p64lib/pdraw/include/draw.h"
 #include "../arch/x86_64-elf/limine.h"
 #include "../include/hcf.h"
+#include "../include/mem/paging.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -36,6 +37,8 @@ void kmain(void) {
       framebuffer_request.response->framebuffer_count < 1) {
     hcf();
   }
+
+  setuppaging();
 
   printf("P64 TESTING!\n");
   printf("TESTING NEW LINES\n");

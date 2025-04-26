@@ -23,7 +23,7 @@ mkdir ./iso_root/EFI/BOOT/
 
 echo ----- BUILDING C FILES -----
 echo Building kernel.c
-x86_64-elf-gcc -c ./src/kernel/kernel/kernel.c -o ./build/kernel.o -g -O2 -pipe -Wall -Wextra -std=gnu11 -ffreestanding -fno-stack-protector -fno-stack-check -fno-PIC -m64 -march=x86-64 -mno-80387 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -mcmodel=kernel -nostdlib
+x86_64-elf-gcc -c ./src/kernel/kernel/kernel.c ./src/kernel/kernel/mem/paging.c -o ./build/kernel.o -g -O2 -pipe -Wall -Wextra -std=gnu11 -ffreestanding -fno-stack-protector -fno-stack-check -fno-PIC -m64 -march=x86-64 -mno-80387 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -mcmodel=kernel -nostdlib
 
 echo ----- BUILDING LIBRARIES -----
 read -p "Do you want to build the libraries? (y/N)
