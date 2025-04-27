@@ -10,5 +10,5 @@
 
 #define EOF (-1)
 
-int printf(const char *__restrict, ...);
+void printf(char *format, ...);
 int putchar(int);

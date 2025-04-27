@@ -2,13 +2,7 @@
 
 ## A basic c/c++ kernel
 
-### Current features
-
-Rendering text to the screen.
-
-New lines.
-
-Rendering squares
+### Features
 
 ## Building
 

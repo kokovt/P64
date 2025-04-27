@@ -43,7 +43,7 @@ clean-build: clean setup makestdlib makep64lib makekernel makeiso run
 build: makestdlib makep64lib makekernel makeiso run
 
 run:
-	qemu-system-x86_64 -cdrom ./build/p64.iso
+	qemu-system-x86_64 -cdrom ./build/p64.iso -no-reboot -d cpu_reset
 
 
 clean:

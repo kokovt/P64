@@ -13,7 +13,7 @@ extern "C" {
 
 void putpixel(int x, int y, int color);
 void fillrect(size_t width, size_t height, size_t x, size_t y, int color);
-void writechar(char ch, uint32_t colour);
+void writechar(char ch, size_t pos_x, size_t pos_y, uint32_t colour);
 
 #ifdef __cplusplus
 }
