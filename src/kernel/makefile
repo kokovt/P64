@@ -44,10 +44,12 @@ build:
 		../../src/kernel/kernel/cpu/tss.c \
 		../../src/kernel/kernel/cpu/gdt.c \
 		../../src/kernel/kernel/cpu/idt.c \
-		../../src/kernel/kernel/utils/io.c $(CFLAGS); \
+		../../src/kernel/kernel/utils/io.c \
+		../../src/kernel/kernel/drivers/keyboard.c \
+		../../src/kernel/kernel/drivers/pic.c $(CFLAGS); \
 	$(as) ../../src/kernel/kernel/mem/reloadgdt.asm -o ./reloadgdt.o $(ASFLAGS); \
 	$(as) ../../src/kernel/kernel/cpu/sse.asm -o ./sse.o $(ASFLAGS); \
-	$(CC) ./entry.o ./reloadgdt.o ./paging.o ./pmm.o ./mapall.o ./tss.o ./gdt.o ./idt.o ./io.o ./sse.o -o p64.bin $(LDFLAGS)
+	$(CC) ./entry.o ./reloadgdt.o ./paging.o ./pmm.o ./mapall.o ./tss.o ./gdt.o ./idt.o ./io.o ./sse.o ./keyboard.o ./pic.o -o p64.bin $(LDFLAGS)
 	
 
 

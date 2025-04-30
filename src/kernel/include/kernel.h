@@ -23,6 +23,12 @@ struct Kernel {
   size_t term_scroll;
   char *term_text;
 
+  char last_pressed;
+
+  // Callback for when a button is pressed. The application for the wm will use
+  // this when that is added.
+  void (*keypress_callback)();
+
   uint64_t *GDT;
   IDTEntry *IDT;
   TSS *tss;
