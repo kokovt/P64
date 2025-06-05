@@ -37,19 +37,9 @@ build:
 	rm -rf ../../build/kernel
 	mkdir ../../build/kernel
 	cd ../../build/kernel/; \
-	$(CC) -c ../../src/kernel/kernel/entry.c \
-		../../src/kernel/kernel/mem/paging.c \
-		../../src/kernel/kernel/mem/pmm.c \
-		../../src/kernel/kernel/mem/mapall.c \
-		../../src/kernel/kernel/cpu/tss.c \
-		../../src/kernel/kernel/cpu/gdt.c \
-		../../src/kernel/kernel/cpu/idt.c \
-		../../src/kernel/kernel/utils/io.c \
-		../../src/kernel/kernel/drivers/keyboard.c \
-		../../src/kernel/kernel/drivers/pic.c $(CFLAGS); \
+	$(CC) -c $(shell find ../../src/kernel/ -name '*.c') $(CFLAGS); \
 	$(as) ../../src/kernel/kernel/mem/reloadgdt.asm -o ./reloadgdt.o $(ASFLAGS); \
 	$(as) ../../src/kernel/kernel/cpu/sse.asm -o ./sse.o $(ASFLAGS); \
-	$(CC) ./entry.o ./reloadgdt.o ./paging.o ./pmm.o ./mapall.o ./tss.o ./gdt.o ./idt.o ./io.o ./sse.o ./keyboard.o ./pic.o -o p64.bin $(LDFLAGS)
-	
+	$(CC) $(shell find ../../build/kernel/ -name '*.o') -o p64.bin $(LDFLAGS)
 
 

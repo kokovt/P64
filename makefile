@@ -21,10 +21,6 @@ makestdlib:
 	cd ./src/libc/; \
 	make
 
-makep64lib:
-	cd ./src/p64lib/; \
-	make
-
 makeiso:
 	cp -v ./build/kernel/p64.bin ./iso_root/boot/
 	cp -v ./src/limine.conf ./limine/limine-bios.sys ./limine/limine-bios-cd.bin \
@@ -38,9 +34,9 @@ makeiso:
 	  iso_root -o ./build/p64.iso
 	./limine/limine bios-install ./build/p64.iso
 
-clean-build: clean setup makestdlib makep64lib makekernel makeiso run
+clean-build: clean setup makestdlib makekernel makeiso run
 
-build: makestdlib makep64lib makekernel makeiso run
+build: makestdlib makekernel makeiso run
 
 run:
 	qemu-system-x86_64 ./build/p64.iso -serial stdio -no-shutdown -no-reboot -monitor telnet:127.0.0.1:8000,server,nowait -d int,cpu_reset,in_asm -D log.txt -m 4G -accel kvm

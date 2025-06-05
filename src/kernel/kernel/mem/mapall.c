@@ -5,7 +5,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
 
 // THIS IS HEAVILY BASED OFF OF UNMAPPEDSTACK/TACOS
 // Check them out!

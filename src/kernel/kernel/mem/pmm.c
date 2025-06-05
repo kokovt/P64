@@ -2,13 +2,12 @@
 #include <kernel.h>
 #include <mem/paging.h>
 #include <mem/pmm.h>
-#include <stdio.h>
+#include <string.h>
 
 // THIS IS HEAVILY BASED OFF OF UNMAPPEDSTACK/TACOS
 // Check them out!
 // https://github.com/UnmappedStack/TacOS/blob/beee6216b58ee07ad39ac5e5350384cfb39d1aaa/src/mem/paging.c
 // This is under a different license from this project.
-
 const char *mem_types[] = {
     "Usable                ", "Reserved              ",
     "ACPI Reclaimable      ", "ACPI NVS              ",
@@ -44,14 +43,19 @@ void init_pmm() {
   }
 
   if (!list_len) {
-    printf(
-
-        "Failed to initialise physical memory allocator, cannot continue.\n");
     hcf();
   }
 }
 
-// Returns a physical address
+// Kmalloc **should** have always returned a virtual address... No clue why I
+// had it returning a physical address.
+
+// Its up to the user to make a malloc implementation for now, and maybe
+// forever. At least for now I will keep access to Kmalloc, for people who are
+// ok with poor memory management, since this will leave a tone of open space.
+// This allocates 4096 bits for every variable used.
+// Not good for memory usage, good for a kernel I think since if we need to
+// expand an item it will have **plenty** of free space.
 uintptr_t kmalloc(size_t num_pages) {
   size_t i = 0;
   Chunk *chunk;
@@ -70,9 +74,8 @@ uintptr_t kmalloc(size_t num_pages) {
     list_insert(kernel.pmm_chunklist, &new_chunk->list);
     init_chunk(new_chunk, (chunk->length - (num_pages + 1)) * PAGE_SIZE);
     memset(chunk, 0, PAGE_SIZE);
-    return (uintptr_t)chunk - kernel.hhdm;
+    return (uintptr_t)chunk;
   }
-  printf("\nPANIC: OUT OF MEMORY\n\n");
   hcf();
   return 0;
 }

@@ -9,5 +9,6 @@ typedef struct {
 } Chunk;
 
 uintptr_t kmalloc(size_t num_pages);
+void kfree(uintptr_t addr, size_t num_pages);
 
 void init_pmm();

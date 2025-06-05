@@ -1,6 +1,8 @@
 #pragma once
 
 #include "cpu/idt.h"
+#include "current_process.h"
+#include "mem/bindings/page_bindings.h"
 #include <cpu/gdt.h>
 #include <cpu/tss.h>
 #include <limine.h>
@@ -10,7 +12,6 @@
 
 // I wasn't originally going to setup  a kernel struct; but I have changed my
 // mind.
-
 struct Kernel {
   uintptr_t cr3;
   uintptr_t hhdm;
@@ -18,16 +19,9 @@ struct Kernel {
   uintptr_t kernel_virt_addr;
 
   size_t memmap_entry_count;
-  size_t term_column;
-  size_t term_row;
-  size_t term_scroll;
-  char *term_text;
-
   char last_pressed;
-
-  // Callback for when a button is pressed. The application for the wm will use
-  // this when that is added.
-  void (*keypress_callback)();
+  struct keypress_owner *keypress_owners[256];
+  uint8_t keypress_owners_length;
 
   uint64_t *GDT;
   IDTEntry *IDT;
@@ -35,8 +29,16 @@ struct Kernel {
 
   struct limine_framebuffer *framebuffer;
   struct limine_memmap_entry *memmap;
+  struct page_binding *page_bindings;
+
+  struct current_process *current_process;
 
   struct list *pmm_chunklist;
+};
+
+struct keypress_owner {
+  uint64_t pid;
+  void (*keypress_function)(char);
 };
 
 extern struct Kernel kernel;

@@ -2,6 +2,12 @@
 
 ## A basic c/c++ kernel
 
+The goal is to make this a **Exokernel**
+
+### Current drawbacks
+
+Maximum of 256 applications pulling keyboard information. Probably not an issue, but it is a limitation.
+
 ### Features
 
 ## Building

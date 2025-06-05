@@ -1,9 +1,9 @@
-#include <drivers/keyboard.h>
+#include <interrupts/keyboard.h>
 #include <io.h>
 #include <kernel.h>
+#include <mem/pmm.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdio.h>
 
 #define PS2_DATA_REG 0x60
 #define PS2_STATUS_REG 0x64
@@ -11,6 +11,8 @@
 
 uint8_t scancode_event_queue[30];
 uint8_t nkbevents = 0;
+
+void (*functions[256])(void);
 
 char character_table[] = {
     0,    0,    '1',  '2',  '3',  '4',  '5',  '6',  '7',  '8',  '9',  '0',
@@ -53,8 +55,8 @@ typedef struct {
 bool shifted = false;
 bool caps = false;
 
+// This doesn't account for things like .
 __attribute__((interrupt)) void keyboard_isr(void *) {
-  // printf("Keybod");
   if (!inb(PS2_STATUS_REG))
     goto ret;
 
@@ -72,9 +74,6 @@ __attribute__((interrupt)) void keyboard_isr(void *) {
   }
 
   if (scancode == 0x0E) {
-    kernel.last_pressed = '\b';
-
-    kernel.keypress_callback();
     goto ret;
   }
 
@@ -84,9 +83,6 @@ __attribute__((interrupt)) void keyboard_isr(void *) {
   }
 
   if (scancode == 0x1C) {
-    kernel.last_pressed = '\n';
-
-    kernel.keypress_callback();
     goto ret;
   }
 
@@ -110,13 +106,14 @@ __attribute__((interrupt)) void keyboard_isr(void *) {
     ch = character_table[scancode];
   }
 
-  kernel.last_pressed = ch;
-  kernel.keypress_callback();
-  goto ret;
+  for (uint8_t i = 0; i < kernel.keypress_owners_length; i++) {
+    kernel.keypress_owners[i]->keypress_function(ch);
+  }
 
+  goto ret;
 ret:
   outb(0x20, 0x20);
-  outb(0xA0, 0x20);
+  outb(0xa0, 0x20);
 }
 
 void init_keyboard() {

@@ -1,9 +1,7 @@
-#include "draw.h"
 #include "kernel.h"
 #include <io.h>
 #include <mem/pmm.h>
 #include <stdint.h>
-#include <stdio.h>
 
 struct interrupt_frame {
   uint64_t rip;
@@ -53,7 +51,7 @@ unsigned long get_rax() {
   return rax_value;
 }
 
-__attribute__((interrupt)) void default_handler(struct interrupt_frame *frame) {
+__attribute__((interrupt)) void default_handler(void *) {
   pushmost();
 
   popmost();

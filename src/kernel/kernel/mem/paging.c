@@ -4,7 +4,6 @@
 #include <mem/paging.h>
 #include <mem/pmm.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 
 #define PAGE_ALIGN_DOWN(addr) ((addr / 4096) * 4096)
@@ -16,6 +15,10 @@
 // Check them out!
 // https://github.com/UnmappedStack/TacOS/blob/beee6216b58ee07ad39ac5e5350384cfb39d1aaa/src/mem/paging.c
 // This is under a different license from this project.
+
+static void invlpg(void *addr) {
+  asm volatile("invlpg (%0)" : : "r"(addr) : "memory");
+}
 
 uint64_t virt_to_phys(uint64_t pml4_addr[], uint64_t virt_addr) {
   virt_addr &= ~TOPBITS;
@@ -68,9 +71,7 @@ void write_vmem(uint64_t *pml4_addr, uint64_t virt_addr, char *data,
     // get the address of this virtual address in kernel memory
     uint64_t kernel_addr = virt_to_phys(pml4_addr, virt_addr);
     if (kernel_addr == 0xDEAD) {
-      printf("write_vmem: virtual address is not mapped! Address: 0x%x\n"
-             "         Cannot write to vmem. Halting.\n",
-             virt_addr);
+
       hcf();
     }
     kernel_addr += kernel.hhdm;
@@ -88,9 +89,6 @@ void read_vmem(uint64_t *pml4_addr, uintptr_t virt_addr, char *buffer,
     // get the address of this virtual address in kernel memory
     uint64_t kernel_addr = virt_to_phys(pml4_addr, virt_addr);
     if (!kernel_addr) {
-      printf("read_vmem: virtual address is not mapped! Address: %p\n"
-             "         Cannot read from vmem. Halting.\n",
-             virt_addr);
       hcf();
     }
     kernel_addr += kernel.hhdm;
@@ -165,8 +163,7 @@ void map_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t phys_addr,
     }
     pml3 = 0;
   }
-  printf("\n[KPANIC] Failed to allocate pages: No more avaliable virtual "
-         "memory. Halting.\n");
+
   hcf();
 }
 
@@ -228,10 +225,60 @@ void alloc_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t num_pages,
     }
     pml3 = 0;
   }
-  printf(
 
-      "Failed to allocate pages: No more avaliable virtual memory. Halting.\n");
   hcf();
+}
+
+uint64_t *walk_page_table(uint64_t *pml4_addr, uint64_t virt_address) {
+  uint64_t pml4_index = (virt_address >> 39) & 0x1FF;
+  if (!(pml4_addr[pml4_index] & 1)) {
+    return NULL;
+  }
+
+  uint64_t *pml3_table =
+      (uint64_t *)(PAGE_ALIGN_DOWN(pml4_addr[pml4_index]) + kernel.hhdm);
+  uint64_t pml3_index = (virt_address >> 30) & 0x1FF;
+
+  if (!(pml3_table[pml3_index] & 1)) {
+    return NULL;
+  }
+
+  uint64_t *pml2_table =
+      (uint64_t *)(PAGE_ALIGN_DOWN(pml3_table[pml3_index]) + kernel.hhdm);
+  uint64_t pml2_index = (virt_address >> 21) & 0x1FF;
+
+  if (!(pml2_table[pml2_index] & 1)) {
+    return NULL;
+  }
+
+  uint64_t *pml1_table =
+      (uint64_t *)(PAGE_ALIGN_DOWN(pml2_table[pml2_index]) + kernel.hhdm);
+  uint64_t pml1_index = (virt_address >> 12) & 0x1FF;
+
+  return &pml1_table[pml1_index];
+}
+
+void dealloc_pages(uint64_t *pml4_addr, uint64_t virt_addr,
+                   uint64_t num_pages) {
+  uint64_t aligned_virt_address = PAGE_ALIGN_DOWN(virt_addr);
+
+  for (uint64_t i = 0; i < num_pages; i++) {
+    uint64_t current_addr = aligned_virt_address + (i * PAGE_SIZE);
+
+    uint64_t *pte = walk_page_table(pml4_addr, current_addr);
+
+    if (pte == NULL || !(*pte & 1)) {
+      continue;
+    }
+
+    uint64_t physical_frame_adress = PAGE_ALIGN_DOWN(*pte);
+
+    kfree(physical_frame_adress, 1);
+
+    *pte = 0;
+
+    invlpg((void *)current_addr);
+  }
 }
 
 void clear_page_cache(uint64_t addr) {
@@ -239,7 +286,6 @@ void clear_page_cache(uint64_t addr) {
 }
 
 void setup_paging(void) {
-  printf("Creating paging tree...\n");
   uint64_t pml4_virt = kmalloc(1) + kernel.hhdm;
   memset((uint8_t *)pml4_virt, 0, 4096);
   map_all((uint64_t *)pml4_virt);

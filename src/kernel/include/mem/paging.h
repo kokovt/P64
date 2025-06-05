@@ -20,3 +20,6 @@ void map_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t phys_addr,
                uint64_t num_pages, uint64_t flags);
 void alloc_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t num_pages,
                  uint64_t flags);
+void dealloc_pages(uint64_t pml4_addr[], uint64_t virt_addr,
+                   uint64_t num_pages);
+uint64_t virt_to_phys(uint64_t pml4_addr[], uint64_t virt_addr);

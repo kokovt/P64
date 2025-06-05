@@ -1,8 +1,7 @@
 #pragma once
+#include "kernel.h"
 #include <hcf.h>
-#include <kernel.h>
 #include <limine.h>
-
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -57,7 +56,5 @@ inline static void init_kernel() {
   kernel.kernel_virt_addr = kernel_address_request.response->virtual_base;
   kernel.memmap = *(memmap_request.response->entries);
   kernel.memmap_entry_count = memmap_request.response->entry_count;
-
-  kernel.term_column = 0;
-  kernel.term_row = 0;
+  kernel.keypress_owners_length = 0;
 }

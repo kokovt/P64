@@ -2,7 +2,6 @@
 #include <kernel.h>
 #include <mem/pmm.h>
 #include <stdint.h>
-#include <stdio.h>
 
 // THIS IS HEAVILY BASED OFF OF UNMAPPEDSTACK/TACOS
 // Check them out!
@@ -66,6 +65,4 @@ __attribute__((noinline)) void init_gdt() {
   __asm__ volatile("mov $0x28, %%ax\nltr %%ax" : : : "eax");
 
   reload_gdt();
-
-  printf("GDT Initialized!\n");
 }

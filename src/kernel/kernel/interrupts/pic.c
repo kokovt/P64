@@ -1,4 +1,4 @@
-#include <drivers/pic.h>
+#include <interrupts/pic.h>
 
 void init_pic() {
   outb(0x20, 0x11);
@@ -11,7 +11,6 @@ void init_pic() {
   outb(0xA1, 0x01);
   outb(0x21, 0xFF);
   outb(0xA1, 0xFF);
-  printf("Initiated PIC.\n");
 }
 
 void unmask_irq(int IRQ) {

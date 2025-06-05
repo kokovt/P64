@@ -14,7 +14,7 @@ void uint64_to_string(uint64_t num, char *str) {
   str[length] = '\0';
   int index = length - 1;
   do {
-    str[index--] = '0' + (num % 10);
+    str[index--] = (num % 10) + '0';
     num /= 10;
   } while (num > 0);
 }
